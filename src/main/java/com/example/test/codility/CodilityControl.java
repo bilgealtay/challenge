@@ -3,7 +3,9 @@ package com.example.test.codility;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 /**
@@ -103,6 +105,100 @@ public class CodilityControl {
             }
         }
         return diff;
+    }
+
+    public int getPositive(int[] A){
+        if (A.length < 0 || A.length > 1000){
+            return -2;
+        }
+
+        int result = 1;
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] == 0){
+                return 0;
+            }
+            result = result * A[i];
+        }
+        if (result > 0){
+            return 1;
+        }
+        return -1;
+    }
+
+    public String palindrome(int N, int K){
+        char[] str = new char[N];
+
+        int k = 1;
+        int j = N - 1;
+        char start = 'a';
+        int ascii = start;
+
+        int middle;
+        if ((N % 2) == 0){
+            middle = N / 2;
+        } else {
+            middle = N / 2 + 1;
+        }
+
+        for (int i = 0; i < middle; i++) {
+            str[i] = (char) ascii;
+            str[j] = (char) ascii;
+            if (k < K ){
+                ascii = ascii + 1 ;
+            }
+            k = k + 1;
+            j = j - 1;
+        }
+        return String.valueOf(str);
+    }
+
+    public String invert(String str){
+        if (str.isEmpty()){
+            return "";
+        } else if (str.length() == 1){
+            return str;
+        } else {
+            char[] invertStr = new char[str.length()];
+            char[] strArray = str.toCharArray();
+            int index = 0;
+            for (int i = str.length()-1; i >= 0; i--) {
+                invertStr[index] = strArray[i];
+                index++;
+            }
+            return String.valueOf(invertStr);
+        }
+    }
+
+    public int solution(int[] A) {
+        int ans = 0;
+        for (int i = 1; i < A.length; i++) {
+            if (ans > A[i]) {
+                ans = A[i];
+            }
+        }
+        return ans;
+    }
+
+    public boolean pair(int[] A){
+        int n = A.length;
+        Arrays.sort(A);
+        int i = 0;
+        while (i < n) {
+            // take first number
+            int number = A[i];
+            int count = 1;
+            i++;
+            // Count all duplicates
+            while (i < n && A[i] == number) {
+                count++;
+                i++;
+            }
+
+            if ((count % 2) != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
