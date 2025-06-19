@@ -1,11 +1,19 @@
 package com.example.test.codewars.control;
 
+import com.example.test.entity.PaymentCalculationModel;
+import io.cucumber.java.eo.Do;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 
-
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -228,6 +236,58 @@ public class CodewarControl {
             return cd.getData();
         }
         return "";
+    }
+
+    public List<PaymentCalculationModel> calculatePayments(){
+        double duration = 24;
+        double rate = 5;
+        double loanAmount = 5000;
+        String startDate = "01.01.2018";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDate startingDate = LocalDate.parse(startDate, formatter);
+
+        double annuity = calculateAnnuity();
+        double initialOutstandingPrincipal = loanAmount;
+        double interest;
+        double remainingOutstandingPrincipal;
+        double principal;
+        double totalPrincipal = 0;
+        List<PaymentCalculationModel> calculationModelList = new ArrayList<>();
+        for (int i = 0; i < duration; i++) {
+            PaymentCalculationModel model = new PaymentCalculationModel();
+
+            model.setInitialOutstandingPrincipal(initialOutstandingPrincipal);
+            interest = new BigDecimal(((rate/100)*30*initialOutstandingPrincipal) / 360).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            principal = new BigDecimal(annuity - interest).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            totalPrincipal += principal;
+            if (i == duration-1 && totalPrincipal > loanAmount){
+                principal = initialOutstandingPrincipal;
+            }
+            remainingOutstandingPrincipal = new BigDecimal(initialOutstandingPrincipal - principal).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            model.setAnnuity(annuity);
+            model.setInterest(interest);
+            model.setPaymentDate(formatter.format(startingDate));
+            startingDate = startingDate.plusMonths(1);
+            model.setPrincipal(principal);
+            model.setRemainingOutstandingPrincipal(remainingOutstandingPrincipal);
+            initialOutstandingPrincipal = remainingOutstandingPrincipal;
+            calculationModelList.add(model);
+        }
+        return calculationModelList;
+    }
+
+    public double calculateAnnuity(){
+        double duration = 24;
+        double rate = 5;
+        double loanAmount = 5000;
+
+        double portion = loanAmount * ((rate/100) / 12);
+        double denominator = 1 - Math.pow((1 + (rate/100)/12), -duration);
+        double annuity = portion / denominator;
+
+        return new BigDecimal(annuity).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
     }
 
 }

@@ -1,8 +1,10 @@
 package com.example.test.boundary;
 
 import com.example.test.codewars.control.CodewarControl;
+import com.example.test.codewars.control.Encode;
 import com.example.test.codility.CodilityControl;
 import com.example.test.codility.entity.CyclicRotationRequest;
+import com.example.test.entity.PaymentCalculationModel;
 import com.example.test.hackerrank.dataStructure.HackerRankControl;
 import com.example.test.hackerrank.entity.DivideRequest;
 import com.example.test.hackerrank.entity.PriceRequest;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -25,13 +28,15 @@ public class TestResources {
     private HackerRankControl hackerRankControl;
     private HackerRankJavaControl hackerRankJavaControl;
     private CodewarControl codewarControl;
+    private Encode encode;
 
 
-    public TestResources(CodilityControl codilityControl, HackerRankControl hackerRankControl, HackerRankJavaControl hackerRankJavaControl, CodewarControl codewarControl) {
+    public TestResources(CodilityControl codilityControl, HackerRankControl hackerRankControl, HackerRankJavaControl hackerRankJavaControl, CodewarControl codewarControl, Encode encode) {
         this.codilityControl = codilityControl;
         this.hackerRankControl = hackerRankControl;
         this.hackerRankJavaControl = hackerRankJavaControl;
         this.codewarControl = codewarControl;
+        this.encode = encode;
     }
 
     @GetMapping(path = "/binary-gap")
@@ -163,6 +168,18 @@ public class TestResources {
     @GetMapping(path = "/beezapps")
     public ResponseEntity getBeezapps(@RequestBody @NotNull String str) {
         double response = codewarControl.average(2,1);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/calculate-annuity")
+    public ResponseEntity calculateAnnuity() {
+        List<PaymentCalculationModel> response = codewarControl.calculatePayments();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/encode")
+    public ResponseEntity encode() {
+        String response = encode.fill();
         return ResponseEntity.ok(response);
     }
 

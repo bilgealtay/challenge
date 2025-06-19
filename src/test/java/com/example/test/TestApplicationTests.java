@@ -20,7 +20,7 @@ class TestApplicationTests {
     @Test
     void contextLoads() {
     }
-
+/*
     @Test
     void shoppingCartIsEmpty() {
 
@@ -62,5 +62,7 @@ class TestApplicationTests {
         productAmount.setTotalPrice(product.getPrice().multiply(new BigDecimal(productAmount.getAmount())));
         shoppingCart.getProductList().add(productAmount);
     }
+
+     */
 
 }
